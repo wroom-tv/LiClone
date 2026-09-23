@@ -1,0 +1,230 @@
+WROOM SOURCE-AVAILABLE LICENSE
+
+Version 1.0 - 2026
+
+Copyright (c) 2026 Wroom. All rights reserved.
+
+
+1. DEFINITIONS
+
+In this License:
+
+"Software" means the source code, object code, compiled binaries,
+documentation, configuration files, assets, and other materials
+distributed by Wroom and covered by this License.
+
+"Modified Version" means a version of the Software that has been
+changed, adapted, extended, translated, or otherwise modified.
+
+"Distribution" means making the Software or a Modified Version
+available to another person or entity, including by publishing,
+uploading, selling, sublicensing, or otherwise providing a copy
+of or access to the Software.
+
+
+2. LICENSE GRANT
+
+Wroom grants you a free, worldwide, non-exclusive, non-transferable
+license to use the Software.
+
+You may, without obtaining additional permission from Wroom:
+
+  a. download and install the Software;
+  b. use the Software for personal purposes;
+  c. use the Software for professional or business purposes;
+  d. use the Software for commercial purposes;
+  e. inspect and study the source code;
+  f. copy the Software for your own use;
+  g. modify, adapt, translate, or extend the Software;
+  h. create Modified Versions;
+  i. compile and build the Software or Modified Versions; and
+  j. use Modified Versions for your own purposes.
+
+No fee is required for the rights granted under this License.
+
+
+3. PRIVATE AND INTERNAL MODIFICATIONS
+
+You are free to modify the Software for your own purposes.
+
+You may create private forks, experimental versions, custom builds,
+internal versions, or other Modified Versions without notifying Wroom
+or obtaining permission.
+
+You are not required to publish your modifications or contribute them
+back to Wroom.
+
+You may use Modified Versions within your own organization,
+infrastructure, or projects, provided that you do not otherwise
+distribute the Modified Version in violation of this License.
+
+
+4. REDISTRIBUTION
+
+You may not distribute, publish, or make the Software or a Modified
+Version publicly available without prior written permission from Wroom.
+
+Without limiting the above, you may not:
+
+  a. publish the Software or a Modified Version in a public repository;
+  b. publish a public fork of the Software;
+  c. upload a Modified Version to a package registry or software
+     distribution platform;
+  d. distribute compiled Modified Versions to third parties;
+  e. redistribute the source code to third parties;
+  f. sell, sublicense, lease, rent, or otherwise transfer the Software
+     or a Modified Version;
+  g. publish the Software as part of another publicly distributed
+     software product; or
+  h. make the Software or a Modified Version available for public
+     download.
+
+Private copies and private modifications are permitted under Section 3.
+
+
+5. USE AS PART OF OTHER SOFTWARE
+
+You may use the Software internally as part of your own projects
+and applications.
+
+This License does not grant permission to publicly distribute the
+Wroom Software itself or any Modified Version containing Wroom-owned
+code.
+
+Your own independently created code remains your own work to the
+extent permitted by applicable law.
+
+This License does not claim ownership of software that is entirely
+independent of the Software.
+
+
+6. OWNERSHIP
+
+The Software is licensed, not sold.
+
+Wroom retains all rights, title, and interest in the Software and
+in the intellectual property rights owned by Wroom.
+
+Except for the rights expressly granted by this License, no rights
+are granted to you.
+
+Nothing in this License transfers ownership of Wroom's copyrights,
+trademarks, or other intellectual property.
+
+
+7. THIRD-PARTY COMPONENTS
+
+The Software may include or depend upon third-party software,
+libraries, frameworks, fonts, icons, media, or other materials.
+
+Third-party components are not covered by this License unless
+explicitly stated otherwise.
+
+Each third-party component remains subject to its own applicable
+license.
+
+Nothing in this License is intended to restrict rights granted
+to you by a third-party license.
+
+Where required, applicable third-party license notices are provided
+with the Software.
+
+
+8. TRADEMARKS AND BRANDING
+
+"Wroom", associated logos, product names, and other Wroom branding
+may be trademarks or other protected identifiers of Wroom.
+
+This License does not grant permission to use Wroom branding in a
+manner that suggests that a project, Modified Version, service, or
+product is officially developed, maintained, sponsored, or endorsed
+by Wroom.
+
+You may use Wroom names to accurately identify the original Software
+or to describe compatibility with it.
+
+You may not represent a Modified Version as an official Wroom release.
+
+
+9. CONTRIBUTIONS
+
+If you voluntarily submit code, documentation, bug fixes, suggestions,
+or other contributions to Wroom, you retain ownership of your
+contribution unless you expressly agree otherwise.
+
+By submitting a contribution for inclusion in the Software, you grant
+Wroom the necessary rights to use, reproduce, modify, distribute,
+and include that contribution in the Software and future versions
+of the Software.
+
+Wroom may choose whether or not to include any contribution.
+
+
+10. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY
+OF ANY KIND, EXPRESS OR IMPLIED, TO THE MAXIMUM EXTENT PERMITTED BY LAW.
+
+WROOM DOES NOT GUARANTEE THAT THE SOFTWARE WILL BE ERROR-FREE,
+SECURE, AVAILABLE, COMPATIBLE, OR SUITABLE FOR ANY PARTICULAR PURPOSE.
+
+YOU USE THE SOFTWARE AT YOUR OWN RISK.
+
+
+11. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, WROOM SHALL NOT BE LIABLE
+FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY,
+OR PUNITIVE DAMAGES ARISING OUT OF OR RELATING TO THE SOFTWARE
+OR THIS LICENSE.
+
+THIS INCLUDES, WITHOUT LIMITATION, LOSS OF DATA, PROFITS, REVENUE,
+BUSINESS, GOODWILL, OR OTHER ECONOMIC LOSS.
+
+NOTHING IN THIS LICENSE EXCLUDES OR LIMITS LIABILITY THAT CANNOT
+LEGALLY BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.
+
+
+12. TERMINATION
+
+This License automatically terminates if you materially violate
+its terms.
+
+Upon termination, you must stop exercising the rights granted by
+this License and cease any unauthorized Distribution of the Software
+or Modified Versions.
+
+Rights and obligations that by their nature are intended to survive
+termination shall remain in effect.
+
+
+13. NO SUPPORT OBLIGATION
+
+Nothing in this License requires Wroom to provide technical support,
+maintenance, updates, security fixes, or future versions of the
+Software.
+
+Wroom may modify, update, replace, suspend, or discontinue the
+Software at any time.
+
+
+14. GENERAL
+
+This License constitutes the complete license governing the Software
+unless a separate written agreement with Wroom expressly states
+otherwise.
+
+If any provision of this License is found to be invalid or
+unenforceable, the remaining provisions remain in effect.
+
+Wroom's failure to enforce any provision of this License does not
+constitute a waiver of that provision.
+
+This License does not grant you the right to use Wroom's trademarks
+or branding except as expressly permitted by this License.
+
+Nothing in this License limits any rights that cannot legally be
+limited under applicable law.
+
+
+Copyright (c) 2026 Wroom. All rights reserved.

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Versions, license, and changelog
+        shell: pwsh
+        run: |
+          $pkg = (Get-Content package.json | ConvertFrom-Json).version
+          $tauri = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $cargo = (Select-String -Path src-tauri/Cargo.toml -Pattern '^version = "([^"]+)"' | Select-Object -First 1).Matches[0].Groups[1].Value
+          if ($pkg -ne $tauri -or $pkg -ne $cargo) {
+            throw "Version mismatch: package=$pkg tauri=$tauri cargo=$cargo"
+          }
+          $license = Get-Content LICENSE -TotalCount 1
+          if ($license -ne "WROOM SOURCE-AVAILABLE LICENSE") {
+            throw "LICENSE must stay the Wroom Source-Available License"
+          }
+          if ("${{ github.event_name }}" -eq "pull_request") {
+            $base = "${{ github.event.pull_request.base.sha }}"
+            $head = "${{ github.event.pull_request.head.sha }}"
+            $changed = git diff --name-only $base $head
+            $code = $changed | Where-Object { $_ -like "src/*" -or $_ -like "src-tauri/src/*" -or $_ -eq "src-tauri/tauri.conf.json" }
+            $notes = $changed | Where-Object { $_ -eq "CHANGELOG.md" }
+            if ($code -and -not $notes) {
+              throw "A code change has to update CHANGELOG.md with what a person using LiClone will notice"
+            }
+          }
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run build
+      - run: cargo check --manifest-path src-tauri/Cargo.toml

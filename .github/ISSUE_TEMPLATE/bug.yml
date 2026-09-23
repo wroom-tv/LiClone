@@ -1,0 +1,23 @@
+name: Bug
+description: Something in LiClone did the wrong thing
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: LiClone version
+      placeholder: "1.0.0"
+    validations:
+      required: true

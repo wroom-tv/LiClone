@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Tag matches app version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if (-not $tag.StartsWith("v")) { throw "Tag must look like v1.2.3" }
+          $expected = $tag.Substring(1)
+          $pkg = (Get-Content package.json | ConvertFrom-Json).version
+          if ($pkg -ne $expected) { throw "Tag $tag does not match package.json $pkg" }
+      - run: npm ci
+      - run: npm run tauri build
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+          generate_release_notes: true
