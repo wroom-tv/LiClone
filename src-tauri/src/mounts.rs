@@ -263,18 +263,59 @@ pub fn start_mount(id: &str) -> Result<u32, String> {
     }
     let mut argv = profile.argv(&rclone);
     crate::schedule::append_bwlimit(&mut argv);
-    let mut cmd = hidden_command(&argv[0]);
-    cmd.args(&argv[1..]);
-    if !profile.background {
-        // still no extra console; Tauri owns the UI
-    }
-    let child = cmd.spawn().map_err(|e| {
-        format!(
-            "Failed to start rclone: {e}. On Windows, rclone mount needs WinFSP."
-        )
-    })?;
+    let pid = spawn_independent(&argv)?;
     crate::discover::invalidate_instance_cache();
-    Ok(child.id())
+    Ok(pid)
+}
+
+/// Start rclone outside LiClone, so quitting the app leaves the mount running.
+fn spawn_independent(argv: &[String]) -> Result<u32, String> {
+    let line = argv.iter().map(|a| quote_win(a)).collect::<Vec<_>>().join(" ");
+    let escaped = line.replace('"', "\"\"");
+    let vbs_path = std::env::temp_dir().join(format!("liclone-mount-{}.vbs", Uuid::new_v4()));
+    let vbs = format!(
+        "Set sh = CreateObject(\"Wscript.Shell\")\r\nsh.Run \"{escaped}\", 0, False\r\n"
+    );
+    fs::write(&vbs_path, &vbs).map_err(|e| e.to_string())?;
+    let command = format!(
+        "wscript.exe //B //Nologo {}",
+        quote_win(&vbs_path.display().to_string())
+    );
+    let script = r#"
+$line = [Console]::In.ReadToEnd().Trim()
+$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{ CommandLine = $line }
+if ($r.ReturnValue -ne 0) { Write-Error "Could not start rclone ($($r.ReturnValue))"; exit 1 }
+Write-Output $r.ProcessId
+"#;
+    let mut cmd = hidden_command("powershell");
+    cmd.args(["-NoProfile", "-NonInteractive", "-Command", script])
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped());
+    let mut child = cmd.spawn().map_err(|e| {
+        format!("Failed to start rclone: {e}. On Windows, rclone mount needs WinFSP.")
+    })?;
+    if let Some(mut stdin) = child.stdin.take() {
+        use std::io::Write as _;
+        stdin.write_all(command.as_bytes()).map_err(|e| e.to_string())?;
+    }
+    let out = child.wait_with_output().map_err(|e| e.to_string())?;
+    let cleanup = vbs_path.clone();
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(3));
+        let _ = fs::remove_file(cleanup);
+    });
+    if !out.status.success() {
+        let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
+        return Err(format!(
+            "Failed to start rclone. On Windows, rclone mount needs WinFSP. {err}"
+        ));
+    }
+    let pid = String::from_utf8_lossy(&out.stdout)
+        .trim()
+        .parse()
+        .unwrap_or(0);
+    Ok(pid)
 }
 
 fn refuse_double_mount(profile: &MountProfile) -> Result<(), String> {

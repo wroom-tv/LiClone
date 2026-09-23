@@ -50,13 +50,16 @@ Remote control lets LiClone ask a running mount which file is uploading. Each pr
 
 Leave remote control on unless you have a reason to turn it off. Without it, LiClone can still list files waiting to upload when the mount cache mode is **writes** or **full**, using rclone’s own cache notes. It cannot show a live “Uploading” line for that mount.
 
+## Active uploads
+
+**Active uploads** lists every file that is still on this PC and has not finished uploading. That includes files saving to disk, files waiting for a turn, and files rclone is sending now. The list is not shortened.
+
 ## Transfers
 
 A file is listed only while rclone still treats it as an upload: the bytes are on this PC and have not finished going to the cloud. Opening a file so it can be read does not put it here.
 
 - **Saving to disk** — the local copy is still growing
 - **Waiting to upload** — the file is on disk and the upload has not started
-- **Uploading** — remote control reports that this file is going to the cloud
 
 ## Clear cache
 
@@ -73,3 +76,5 @@ The sizes in the preview are the file sizes rclone stored, which is what the cac
 ## Running mounts
 
 **Instances** lists rclone processes LiClone can see, including ones you started outside the app. You can stop one from that list. Stopping a mount unmounts that drive. Wait until Windows has released the drive letter before you start it again.
+
+Quitting LiClone does not stop those processes. A mount you started from LiClone keeps the drive open after the app is gone. Open LiClone again later and it will see the same rclone process. Use **Quit** only when you want the window and the tray icon to go away.

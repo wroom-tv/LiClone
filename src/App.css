@@ -155,7 +155,7 @@ button {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 92px 1fr;
+  grid-template-columns: 108px 1fr;
 }
 
 .rail {
@@ -188,6 +188,8 @@ button {
   gap: 6px;
   font-size: 10px;
   text-transform: capitalize;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .rail button svg {

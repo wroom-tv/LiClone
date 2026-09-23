@@ -23,9 +23,9 @@ import { Setup } from "./setup";
 import { TitleBar } from "./TitleBar";
 import "./App.css";
 
-type Tab = "instances" | "mounts" | "cache" | "transfers" | "remotes" | "schedule";
+type Tab = "instances" | "mounts" | "cache" | "uploads" | "transfers" | "remotes" | "schedule";
 
-const TABS: Tab[] = ["instances", "mounts", "cache", "transfers", "remotes", "schedule"];
+const TABS: Tab[] = ["instances", "mounts", "cache", "uploads", "transfers", "remotes", "schedule"];
 
 function isRemoteFs(fs: string | null | undefined) {
   if (!fs || !fs.includes(":")) return false;
@@ -47,39 +47,6 @@ function cloudUpload(item: TransferItem) {
 
 function num(v: unknown): number {
   return typeof v === "number" ? v : 0;
-}
-
-function Belt({ items }: { items: (TransferItem & { addr?: string })[] }) {
-  if (!items.length) {
-    return (
-      <div className="belt empty">
-        <div className="belt-head">
-          <strong>Active uploads</strong>
-          <span>No status yet</span>
-        </div>
-        <div className="lanes">Files that are on this PC and not on the cloud yet show up here, with progress once rclone reports it.</div>
-      </div>
-    );
-  }
-  return (
-    <div className="belt">
-      <div className="belt-head">
-        <strong>Active uploads</strong>
-        <span>{items.length} uploading</span>
-      </div>
-      <div className="lanes">
-        {items.slice(0, 5).map((t, i) => (
-          <div className="lane" key={`${t.name}-${i}`}>
-            <div className="lane-name">{t.name}</div>
-            <div className="track">
-              <i style={{ width: `${pct(t.percentage)}%` }} />
-            </div>
-            <div className="lane-rate">{rate(t.speed)}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default function App() {
@@ -324,11 +291,11 @@ export default function App() {
               onClick={() => setTab(key)}
             >
               <TabIcon name={key} />
-              {key}
+              <span>{key === "uploads" ? "active uploads" : key}</span>
             </button>
           ))}
         </nav>
-        <div className="rail-foot">1.0.0</div>
+        <div className="rail-foot">1.1.0</div>
       </aside>
       <div className="shell">
         <header className="top">
@@ -362,7 +329,6 @@ export default function App() {
             <span>{rate(speed)}</span>
           </div>
         </header>
-        <Belt items={transferring} />
         <main className="content">
           {notice && <div className="toast ok">{notice}</div>}
           {error && <div className="toast">{error}</div>}
@@ -642,11 +608,83 @@ export default function App() {
             </>
           )}
 
+          {tab === "uploads" && (
+            <div className="card">
+              <h2>Active uploads</h2>
+              <p className="empty">
+                {transferring.length
+                  ? `${transferring.length} file${transferring.length === 1 ? "" : "s"} still on this PC.`
+                  : "Nothing is waiting to upload. A file shows up here only while rclone still has it marked dirty: saved on this PC, not on the remote yet."}
+              </p>
+              {transferring.length > 0 && (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>Progress</th>
+                    <th>Left</th>
+                    <th>Speed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transferring.map((t, i) => {
+                      const queued = t.phase === "queued";
+                      const writing = t.phase === "writing";
+                      const left = queued
+                        ? t.size
+                        : t.size > 0
+                          ? Math.max(0, t.size - t.bytes)
+                          : 0;
+                      const phase = writing
+                        ? "saving to disk"
+                        : queued
+                          ? "waiting to upload"
+                          : "uploading";
+                      return (
+                        <tr key={`${t.name}-${i}`}>
+                          <td>
+                            <div>{t.name}</div>
+                            <div className="mono" style={{ color: "var(--muted)" }}>
+                              {phase}
+                              {t.dstFs ? ` · ${t.dstFs}` : ""}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="bar">
+                              <i
+                                style={{
+                                  width: `${queued ? 0 : pct(t.percentage)}%`,
+                                  background: queued ? "var(--hold)" : undefined,
+                                }}
+                              />
+                            </div>
+                            <div className="mono">
+                              {queued
+                                ? `${bytes(t.bytes)} on disk`
+                                : writing
+                                  ? `${pct(t.percentage).toFixed(0)}% saved locally`
+                                  : `${pct(t.percentage).toFixed(0)}% · ${bytes(t.bytes)} / ${bytes(t.size)}`}
+                            </div>
+                          </td>
+                          <td className="mono">
+                            {queued ? "whole file" : bytes(left)}
+                            <div>{queued ? "not started" : writing ? "local" : eta(t.eta)}</div>
+                          </td>
+                          <td className="mono">{queued || writing ? "—" : rate(t.speed)}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+              )}
+            </div>
+          )}
+
           {tab === "transfers" && (
             <div className="row two">
               <div className="card">
                 <h2>On disk, not on the cloud</h2>
-                {!transferring.length && (
+                {!transferring.some((item) => item.phase !== "uploading") && (
                   <p className="empty">
                     Nothing is waiting to upload. A file shows up here only while rclone
                     still has it marked dirty: saved on this PC, not on the remote yet.
@@ -663,7 +701,7 @@ export default function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {transferring.map((t, i) => {
+                    {transferring.filter((item) => item.phase !== "uploading").map((t, i) => {
                       const queued = t.phase === "queued";
                       const writing = t.phase === "writing";
                       const left = queued

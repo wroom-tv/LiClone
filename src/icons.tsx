@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-type Tab = "instances" | "mounts" | "cache" | "transfers" | "remotes" | "schedule";
+type Tab = "instances" | "mounts" | "cache" | "uploads" | "transfers" | "remotes" | "schedule";
 
 const stroke = {
   fill: "none",
@@ -36,6 +36,15 @@ export function TabIcon({ name }: { name: Tab }): ReactElement {
         <ellipse cx="12" cy="6" rx="7" ry="2.6" />
         <path d="M5 6v6c0 1.5 3.1 2.6 7 2.6s7-1.1 7-2.6V6" />
         <path d="M5 12v6c0 1.5 3.1 2.6 7 2.6s7-1.1 7-2.6v-6" />
+      </svg>
+    );
+  }
+  if (name === "uploads") {
+    return (
+      <svg viewBox="0 0 24 24" {...stroke}>
+        <path d="M12 16V6" />
+        <path d="M8.2 9.6 12 5.8l3.8 3.8" />
+        <path d="M5 18.5h14" />
       </svg>
     );
   }

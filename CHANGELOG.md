@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+
+- Active uploads has its own tab and lists every file still on this PC, including ones waiting or still saving. The list is not cut off.
+- Quitting LiClone leaves rclone mounts running. Stop a mount from Instances when you want that drive to go away.
+
 ## 1.0.0
 
 First release of LiClone for Windows.

@@ -2068,7 +2068,7 @@ dependencies = [
 
 [[package]]
 name = "liclone"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "dirs",
  "reqwest 0.12.28",
