@@ -131,12 +131,6 @@ pub async fn probe(
         }
     };
     let transferring = parse_transferring(&stats);
-    let transferred = rc_post(&addr, "/core/transferred", u, p, json!({}))
-        .await
-        .ok()
-        .and_then(|v| v.get("transferred").cloned())
-        .and_then(|v| v.as_array().cloned())
-        .unwrap_or_default();
     let vfs = rc_post(&addr, "/vfs/stats", u, p, json!({})).await.ok();
     let options = rc_post(&addr, "/options/get", u, p, json!({})).await.ok();
 
@@ -147,7 +141,7 @@ pub async fn probe(
         stats: Some(stats),
         vfs,
         transferring,
-        transferred,
+        transferred: Vec::new(),
         options,
     }
 }

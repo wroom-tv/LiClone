@@ -77,4 +77,6 @@ The sizes in the preview are the file sizes rclone stored, which is what the cac
 
 **Instances** lists rclone processes LiClone can see, including ones you started outside the app. You can stop one from that list. Stopping a mount unmounts that drive. Wait until Windows has released the drive letter before you start it again.
 
+When a newer LiClone is published, the app downloads it after it opens and then restarts. Your mounts stay up while that happens. If your version is too old for the newest release, LiClone installs a stop in between first, restarts, and then continues. That stop is how older settings get brought forward before a release that can no longer read them.
+
 Quitting LiClone does not stop those processes. A mount you started from LiClone keeps the drive open after the app is gone. Open LiClone again later and it will see the same rclone process. Use **Quit** only when you want the window and the tray icon to go away.

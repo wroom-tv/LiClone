@@ -18,6 +18,8 @@ import type {
 
 export const api = {
   rcloneInfo: () => invoke<RcloneInfo>("rclone_info"),
+  applySignedUpdate: (manifestUrl: string) =>
+    invoke<void>("apply_signed_update", { manifestUrl }),
   installRclone: () => invoke<RcloneInfo>("install_rclone"),
   listRemotes: () => invoke<string[]>("list_remotes"),
   listInstances: () => invoke<RcloneInstance[]>("list_instances"),

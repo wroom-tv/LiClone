@@ -46,6 +46,34 @@ struct ExtraProc {
     exe: Option<String>,
 }
 
+fn cached_process_info() -> HashMap<u32, ExtraProc> {
+    if let Ok(guard) = process_info_cache().lock() {
+        if let Some(hit) = guard.as_ref() {
+            if hit.at.elapsed() < Duration::from_secs(60) {
+                return hit.items.clone();
+            }
+        }
+    }
+    let items = extra_process_info();
+    if let Ok(mut guard) = process_info_cache().lock() {
+        *guard = Some(ProcessInfoHit {
+            at: Instant::now(),
+            items: items.clone(),
+        });
+    }
+    items
+}
+
+struct ProcessInfoHit {
+    at: Instant,
+    items: HashMap<u32, ExtraProc>,
+}
+
+fn process_info_cache() -> &'static Mutex<Option<ProcessInfoHit>> {
+    static CACHE: OnceLock<Mutex<Option<ProcessInfoHit>>> = OnceLock::new();
+    CACHE.get_or_init(|| Mutex::new(None))
+}
+
 fn extra_process_info() -> HashMap<u32, ExtraProc> {
     #[cfg(windows)]
     {
@@ -117,7 +145,7 @@ pub fn invalidate_instance_cache() {
 pub fn list_instances() -> Vec<RcloneInstance> {
     if let Ok(guard) = instance_cache().lock() {
         if let Some(hit) = guard.as_ref() {
-            if hit.at.elapsed() < Duration::from_secs(8) {
+            if hit.at.elapsed() < Duration::from_secs(20) {
                 return hit.items.clone();
             }
         }
@@ -143,7 +171,7 @@ fn instance_cache() -> &'static Mutex<Option<InstanceHit>> {
 }
 
 pub(crate) fn scan_instances() -> Vec<RcloneInstance> {
-    let extras = extra_process_info();
+    let extras = cached_process_info();
     let mut sys = System::new();
     sys.refresh_processes_specifics(ProcessesToUpdate::All, true, refresh_kind());
     let mut out = Vec::new();

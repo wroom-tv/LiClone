@@ -1,4 +1,8 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { getVersion } from "@tauri-apps/api/app";
+import { check } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
+import { isBridge, nextHop, UPDATE_ROUTE_URL, type UpdateRoute } from "./updateRoute";
 import { Button } from "./sealed/ui";
 import { api } from "./api";
 import { TabIcon } from "./icons";
@@ -61,6 +65,7 @@ export default function App() {
   const [history, setHistory] = useState<HistoryEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const refreshBusy = useRef(false);
   const [draft, setDraft] = useState<MountProfile>(emptyMount());
   const [preview, setPreview] = useState("");
   const [busy, setBusy] = useState(false);
@@ -90,6 +95,8 @@ export default function App() {
   }
 
   async function refreshCore() {
+    if (refreshBusy.current) return;
+    refreshBusy.current = true;
     try {
       const [nextInfo, nextInstances] = await Promise.all([
         api.rcloneInfo(),
@@ -112,6 +119,8 @@ export default function App() {
       setHistory(failures.length ? await api.noteFailures(failures) : await api.listHistory());
     } catch (e) {
       setError(String(e));
+    } finally {
+      refreshBusy.current = false;
     }
   }
 
@@ -144,6 +153,41 @@ export default function App() {
     }).catch(() => {});
     const id = setInterval(() => void refreshCore(), 12000);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const current = await getVersion();
+        const response = await fetch(UPDATE_ROUTE_URL);
+        if (response.ok) {
+          const route = (await response.json()) as UpdateRoute;
+          const next = nextHop(current, route.route ?? []);
+          if (!next || cancelled) return;
+          setNotice(
+            isBridge(next, route.route)
+              ? `Installing LiClone ${next} first. A newer release needs this stop, then LiClone will update again after it restarts.`
+              : `Installing LiClone ${next}. The app will reopen when it is ready.`,
+          );
+          await api.applySignedUpdate(
+            `https://github.com/wroom-tv/LiClone/releases/download/v${next}/latest.json`,
+          );
+          if (!cancelled) await relaunch();
+          return;
+        }
+        const update = await check();
+        if (!update || cancelled) return;
+        setNotice(`Installing LiClone ${update.version}. The app will reopen when it is ready.`);
+        await update.downloadAndInstall();
+        if (!cancelled) await relaunch();
+      } catch {
+        // A dev build has nothing to install. Leave the app open.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {

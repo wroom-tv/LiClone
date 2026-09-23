@@ -266,6 +266,9 @@ fn scan_once() -> ObservedTransfers {
         let skip = track.done.len() - 40;
         track.done.drain(0..skip);
     }
+    track.samples.retain(|key, _| {
+        now_dirty.keys().any(|name| key == &format!("dirty:{name}"))
+    });
     track.dirty = now_dirty;
 
     let mut failures = Vec::new();
@@ -307,6 +310,13 @@ fn observation_cache() -> &'static Mutex<Option<CachedObs>> {
 fn scanning() -> &'static AtomicBool {
     static SCANNING: AtomicBool = AtomicBool::new(false);
     &SCANNING
+}
+
+pub fn cached_observation() -> Option<ObservedTransfers> {
+    observation_cache()
+        .lock()
+        .ok()
+        .and_then(|guard| guard.as_ref().map(|hit| hit.value.clone()))
 }
 
 pub fn observe_transfers() -> ObservedTransfers {

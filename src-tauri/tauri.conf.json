@@ -31,6 +31,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": ["nsis", "msi"],
     "publisher": "Wroom",
     "homepage": "https://github.com/wroom-tv/LiClone",
@@ -57,6 +58,17 @@
         "uninstallerHeaderImage": "windows/header.bmp",
         "installerIcon": "icons/icon.ico",
         "uninstallerIcon": "icons/icon.ico"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE4NjQyMzJGRTYyMDkyNjkKUldScGtpRG1MeU5rcUFoUGpCa3psb01GNVc4aG9ncWo2K3RLVmtqUVF3cHJCaGV0Q2xZY0planIK",
+      "endpoints": [
+        "https://github.com/wroom-tv/LiClone/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }

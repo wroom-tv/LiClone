@@ -81,6 +81,29 @@ fn delete_mount(id: String) -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn apply_signed_update(app: tauri::AppHandle, manifest_url: String) -> Result<(), String> {
+    use tauri_plugin_updater::UpdaterExt;
+    let url = manifest_url
+        .parse()
+        .map_err(|_| "The update address is not valid.".to_string())?;
+    let updater = app
+        .updater_builder()
+        .endpoints(vec![url])
+        .map_err(|e| e.to_string())?
+        .build()
+        .map_err(|e| e.to_string())?;
+    let update = updater.check().await.map_err(|e| e.to_string())?;
+    let Some(update) = update else {
+        return Ok(());
+    };
+    update
+        .download_and_install(|_, _| {}, || {})
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
 fn start_mount(id: String) -> Result<u32, String> {
     mounts::start_mount(&id)
 }
@@ -274,8 +297,10 @@ fn install_tray(app: &tauri::App) -> tauri::Result<()> {
     let tray = builder.build(app)?;
     let handle = app.handle().clone();
     std::thread::spawn(move || loop {
-        std::thread::sleep(std::time::Duration::from_secs(4));
-        let observed = transfers::observe_transfers();
+        std::thread::sleep(std::time::Duration::from_secs(30));
+        let Some(observed) = transfers::cached_observation() else {
+            continue;
+        };
         let waiting = observed.transferring.len();
         let tip = if waiting == 0 {
             "Wroom LiClone — nothing waiting to upload".to_string()
@@ -296,6 +321,8 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             use tauri::Manager;
             install_tray(app)?;
@@ -323,6 +350,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             rclone_info,
+            apply_signed_update,
             install_rclone,
             list_remotes,
             list_instances,

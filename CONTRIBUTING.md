@@ -34,6 +34,7 @@ Leave these alone unless the change cannot work without them:
 
 - The same version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`
 - A `CHANGELOG.md` entry under that version, written as something a person will notice. Not a list of file names.
+- For a release, `updates.json` names the newest version older installs may move to. A release that cannot read older settings gets its own earlier stop. See [Update stops](docs/updates.md).
 - No passwords, tokens, rclone config, or private mount paths
 - Wording in the app and in the docs that speaks to the person using LiClone
 
