@@ -339,7 +339,7 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <div className="rail-foot">1.1.0</div>
+        <div className="rail-foot">1.2.0</div>
       </aside>
       <div className="shell">
         <header className="top">

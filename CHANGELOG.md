@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0
 
 - LiClone checks GitHub for a newer release when it opens, installs it, and restarts. rclone mounts keep running. If a future release cannot read settings from this version, LiClone installs a compatible stop first and updates again after it restarts.
 - Leaving LiClone open no longer piles up process scans and finished-transfer history until the window freezes.

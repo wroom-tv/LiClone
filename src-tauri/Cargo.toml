@@ -1,6 +1,6 @@
 [package]
 name = "liclone"
-version = "1.1.0"
+version = "1.2.0"
 description = "LiClone — mount cloud storage with rclone, and see what still needs to upload"
 authors = ["Wroom"]
 license-file = "../LICENSE"
